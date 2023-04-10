@@ -5,8 +5,8 @@ import random
 conn = psycopg2.connect(
     host="localhost",
     database="train_ticketing_system",
-    user="postgres",
-    password="admin"
+    user="your_user",
+    password="your_password"
 )
 
 def generate_ticket_id():
