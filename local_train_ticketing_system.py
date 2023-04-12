@@ -5,8 +5,8 @@ import random
 conn = psycopg2.connect(
     host="localhost",
     database="train_ticketing_system",
-    user="your_user",
-    password="your_password"
+    user="postgres",
+    password="admin"
 )
 
 def generate_ticket_id():
@@ -30,10 +30,21 @@ def book_ticket():
     from_station = input("From station: ")
     to_station = input("To station: ")
     departure_time = input("Departure time: ")
-    ticket_id = generate_ticket_id()
-    cursor.execute("INSERT INTO tickets (ticket_id, name, age, gender, from_station, to_station, departure_time) VALUES (%s, %s, %s, %s, %s, %s, %s)", (ticket_id, name, age, gender, from_station, to_station, departure_time))
-    conn.commit()
-    print("Ticket booked successfully. Your ticket ID is:", ticket_id)
+    if not validate(from_station, to_station, departure_time):
+        print("Sorry data is not correct")
+    else:
+        ticket_id = generate_ticket_id()
+        cursor.execute("INSERT INTO tickets (ticket_id, name, age, gender, from_station, to_station, departure_time) VALUES (%s, %s, %s, %s, %s, %s, %s)", (ticket_id, name, age, gender, from_station, to_station, departure_time))
+        conn.commit()
+        print("Ticket booked successfully. Your ticket ID is:", ticket_id)
+
+def validate(from_station, to_station, departure_time):
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM trains")
+    rows = cursor.fetchall()
+    if rows[1] != from_station or rows[2] != to_station or rows[3] != departure_time:
+        return False
+    return True
 
 def main():
     while True:
